@@ -1,5 +1,6 @@
 package me.karunarathne.Activity;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -12,12 +13,16 @@ public class Q3 {
 
     public static void main(String[] args) {
         scanner = new Scanner (System.in) ;
-        while (true) {
-            if (! mainLoop ()) break ;
+        try {
+            while (true) {
+                if (! mainLoop ()) break ;
+            }
+        } finally {
+            scanner.close() ;
         }
     }
     
-    private static boolean mainLoop() {
+    private static boolean mainLoop() throws InputMismatchException {
         numberOne = getNumber ("first");
         numberTwo = getNumber ("second") ;
         printCurrentState () ;
@@ -39,14 +44,22 @@ public class Q3 {
             "\n The second number is = " + numberTwo + "\n") ;
     }
 
-    private static double getNumber(String string) {
+    private static double getNumber(String string) throws InputMismatchException {
         print ("Enter the " + string + " number > ") ;
-        return Double.valueOf(scanner.nextLine()) ;
+        try {
+            return Double.parseDouble(scanner.nextLine()) ;
+        } catch (Exception e) {
+            throw new InputMismatchException("input does not seem numeric") ;
+        }
     }
 
-    private static boolean askRepeat() {
+    private static boolean askRepeat() throws InputMismatchException {
         print ("Would you like to do another? (Y/N) > ") ;
-        return (scanner.nextLine().equalsIgnoreCase("y")) ? true : false ;
+        try {
+            return scanner.nextLine().equalsIgnoreCase("y");
+        } catch (Exception e) {
+            throw new InputMismatchException("unexpected format of input") ;
+        }
     }
 
     private static void print(String output) {

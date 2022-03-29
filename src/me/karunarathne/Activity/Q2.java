@@ -1,5 +1,6 @@
 package me.karunarathne.Activity;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -10,26 +11,38 @@ public class Q2 {
 
     public static void main(String[] args) {
         scanner = new Scanner (System.in) ;
-        while (true) {
-            if (! mainLoop ()) break ;
+        try {
+            while (true) {
+                if (! mainLoop ()) break ;
+            }
+        } finally {
+            scanner.close() ;
         }
     }
 
-    private static boolean mainLoop() {
+    private static boolean mainLoop() throws InputMismatchException {
         Circle circle = new Circle ( readInput ()) ;
         print (circle.toString()) ;
 
         return askRepeat() ;
     }
 
-    private static boolean askRepeat() {
+    private static boolean askRepeat() throws InputMismatchException {
         print ("Would you like to do another? (Y/N) > ") ;
-        return (scanner.nextLine().equalsIgnoreCase("y")) ? true : false ;
+        try {
+            return scanner.nextLine().equalsIgnoreCase("y");
+        } catch (Exception e) {
+            throw new InputMismatchException("unexpected format of input") ;
+        }
     }
 
-    private static double readInput() {
+    private static double readInput() throws InputMismatchException {
         print ("Enter the radius > ") ;
-        return Double.valueOf(scanner.nextLine());
+        try {
+            return Double.parseDouble(scanner.nextLine());
+        } catch (Exception e) {
+            throw new InputMismatchException("input does not seem numeric") ;
+        }
     }
 
     private static void print(String output) {
@@ -38,7 +51,7 @@ public class Q2 {
 }
 
 class Circle {
-    private double radius ;
+    private final double radius ;
     private static final double PI = Math.PI ;
 
     public Circle (double radius) {
@@ -53,11 +66,8 @@ class Circle {
         return 2 * PI * radius ;
     }
 
-    // private String formatToTwo (double number) {
-    //     return String.format("%.2f", String.valueOf(number)) ;
-    // }
-
     public String toString () {
-        return "Area = " + this.getArea() + " and Perimeter = " + this.getPerimeter() + "\n" ;
+        return "Area = " + String.format("%.2f", this.getArea()) +
+                " and Perimeter = " + String.format("%.2f", this.getPerimeter()) + "\n" ;
     }
 }

@@ -1,5 +1,6 @@
 package me.karunarathne.Activity ;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -12,18 +13,26 @@ public class Q1 {
     public static void main(String[] args) {
         scanner = new Scanner (System.in) ;
         while (true) {
-            if (! mainLoop ()) break ;
+            try {
+                if (!mainLoop()) break;
+            } finally {
+                scanner.close () ;
+            }
         }
     }
 
-    private static boolean mainLoop() {
+    private static boolean mainLoop() throws InputMismatchException {
         printMultiTable (readNumber ()) ;
         return askRepeat () ;
     }
 
-    private static boolean askRepeat() {
+    private static boolean askRepeat() throws InputMismatchException {
         print ("Would you like to do another? (Y/N) > ") ;
-        return (scanner.nextLine().equalsIgnoreCase("y")) ? true : false ;
+        try {
+            return scanner.nextLine().equalsIgnoreCase("y");
+        } catch (Exception e) {
+            throw new InputMismatchException ("unexpected form of input") ;
+        }
     }
 
     private static void printMultiTable(int number) {
@@ -34,9 +43,13 @@ public class Q1 {
         }
     }
 
-    private static int readNumber() {
+    private static int readNumber() throws InputMismatchException {
         print ("Enter a number > ") ;
-        return Integer.valueOf( scanner.nextLine()) ;
+        try {
+            return Integer.parseInt(scanner.nextLine());
+        } catch (Exception e) {
+            throw new InputMismatchException ("incorrect format of input") ;
+        }
     }
 
     private static void print (String output) {

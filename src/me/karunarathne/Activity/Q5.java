@@ -1,43 +1,64 @@
 package me.karunarathne.Activity;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
- * Write a Java program to calculate the avarage value of array elements
+ * Write a Java program to calculate the average value of array elements
  */
 public class Q5 {
     private static Scanner scanner;
     private static String [] numbers ;
+
     public static void main(String[] args) {
         scanner = new Scanner (System.in) ;
-        while (true) {
-            if (! mainLoop ()) break ;
+        try {
+            while (true) {
+                if (! mainLoop ()) break ;
+            }
+        } finally {
+            scanner.close() ;
         }
     }
 
-    private static boolean mainLoop() {
-        readArray () ;
-        printAvg (calculateSum () / numbers.length ) ;
-
+    private static boolean mainLoop() throws InputMismatchException, ArithmeticException {
+        populateArray() ;
+        try {
+            printAvg(calculateSum() / numbers.length);
+        } catch (Exception e) {
+            throw new ArithmeticException("unexpected input for division") ;
+        }
         return askRepeat ();
     }
 
-    private static double calculateSum () {
+    private static double calculateSum () throws InputMismatchException {
         double total = 0.0 ;
         for (String element: numbers) {
-            total += Double.valueOf (element) ;
+            try {
+                total += Double.parseDouble(element);
+            } catch (Exception e) {
+                throw new InputMismatchException("expected numeric input") ;
+            }
         }
         return total ;
     }
 
-    private static void readArray() {
+    private static void populateArray() throws InputMismatchException {
         print ("Input numbers seperated by spaces > ") ;
-        numbers = scanner.nextLine().split(" ") ;
+        try {
+            numbers = scanner.nextLine().split(" ") ;
+        } catch (Exception e) {
+            throw new InputMismatchException("unexpected input") ;
+        }
     }
 
-    private static boolean askRepeat() {
+    private static boolean askRepeat() throws InputMismatchException {
         print ("\n\nWould you like to do another? (Y/N) > ") ;
-        return (scanner.nextLine().equalsIgnoreCase("y")) ? true : false ;
+        try {
+            return scanner.nextLine().equalsIgnoreCase("y");
+        } catch (Exception e) {
+            throw new InputMismatchException("unexpected format of input") ;
+        }
     }
 
     private static void print(String output) {
